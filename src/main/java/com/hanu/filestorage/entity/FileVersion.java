@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import java.util.Date;
+import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @NoArgsConstructor
@@ -18,12 +18,23 @@ import java.util.Date;
 public class FileVersion {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @ManyToOne
-    private File fileId;
+    @JoinColumn(name = "file_id", nullable = false)
+    private File file;
+
     private int version;
     private double fileSize;
     private int numberOfDownload;
     private String path;
-    private Date createTime;
+
+    @CreatedDate
+    @Column(name = "created_at")
+    private Timestamp createTime;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private Timestamp updatedAt;
 }

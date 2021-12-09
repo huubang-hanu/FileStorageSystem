@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.Date;
+import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @NoArgsConstructor
@@ -16,11 +17,19 @@ import java.util.Date;
 @Setter
 public class SettingInformation {
 
-    @Id()
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private double maxFileSize;
     private int itemPerPage;
     private String mineTypeAllowed;
-    private Date lastUpdatedTime;
+
+    @CreatedDate
+    @Column(name = "created_at")
+    private Timestamp createTime;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private Timestamp updatedAt;
 }

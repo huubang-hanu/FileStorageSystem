@@ -1,4 +1,4 @@
 package com.hanu.filestorage.service;
 
-public interface SettingInformationService {
+public class SettingInformationService {
 }
