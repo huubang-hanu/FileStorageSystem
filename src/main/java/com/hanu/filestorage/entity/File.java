@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
@@ -30,4 +32,8 @@ public class File {
     @OneToMany(mappedBy = "file", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
     private Set<FileVersion> fileVersions;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private Timestamp updatedAt;
 }

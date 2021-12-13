@@ -1,25 +1,36 @@
 package com.hanu.filestorage.service;
 
 import com.hanu.filestorage.entity.File;
+import com.hanu.filestorage.entity.FileVersion;
 import com.hanu.filestorage.repository.FileRepository;
+import com.hanu.filestorage.util.FileUtil;
+import lombok.SneakyThrows;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Service
 public class FileService {
+    private FileUtil fileUtil;
+    private FileRepository fileRepo;
 
+    public FileService(FileUtil fileUtil, FileRepository fileRepo) {
+        this.fileUtil = fileUtil;
+        this.fileRepo = fileRepo;
+    }
 
+    @SneakyThrows
+    public String storeFile(MultipartFile newFile){
+        Integer existedFileId = checkFileExist(newFile);
+        String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
+        long fileSize = newFile.getSize();
+        if( existedFileId != null) {
+            String path = fileUtil.saveFileToFolder(newFile, 1);
+            FileVersion fileVersion = new FileVersion();
+        }
 
-    public String storeFile(MultipartFile file){
-        //Check mime and file size
-
-        //Check file exist in system
-
-        //if file's name is not exist --> Create File and FileVersion
-
-        //if file's name already exit --> Update file(version numer) and create new FileVersion
-
-        //Return file File information and all of its versions
         return null;
     }
 
@@ -46,7 +57,19 @@ public class FileService {
         return false;
     }
 
-
+    /**
+     * Check file exist by file name and mime
+     * @param newFile
+     * @return
+     */
+    public Integer checkFileExist(MultipartFile newFile){
+        String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
+        File file = fileRepo.findByName(fileName);
+        if(file != null && file.getMime().equals(newFile.getContentType())){
+            return file.getId();
+        }
+        return null;
+    }
 
 
 

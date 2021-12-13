@@ -26,7 +26,7 @@ public class FileVersion {
     private File file;
 
     private int version;
-    private double fileSize;
+    private long fileSize;
     private int numberOfDownload;
     private String path;
 
