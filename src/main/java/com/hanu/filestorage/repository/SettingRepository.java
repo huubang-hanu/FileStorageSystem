@@ -1,9 +1,9 @@
 package com.hanu.filestorage.repository;
 
-import com.hanu.filestorage.entity.SettingInformation;
+import com.hanu.filestorage.entity.Setting;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SettingInformationRepository extends JpaRepository<SettingInformation, Integer> {
+public interface SettingRepository extends JpaRepository<Setting, Integer> {
 }

@@ -23,14 +23,14 @@ public class FileService {
 
     @SneakyThrows
     public String storeFile(MultipartFile newFile){
-        Integer existedFileId = checkFileExist(newFile);
         String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
+        File file = fileRepo.findByName(fileName);
+        boolean isExist = file != null && file.getMime().equals(newFile.getContentType());
         long fileSize = newFile.getSize();
-        if( existedFileId != null) {
-            String path = fileUtil.saveFileToFolder(newFile, 1);
+        if( isExist) {
+            String path = fileUtil.saveFileToFolder(newFile);
             FileVersion fileVersion = new FileVersion();
         }
-
         return null;
     }
 
@@ -40,7 +40,6 @@ public class FileService {
      * @return
      */
     public List<File> getAll(){
-
 
         return null;
     }
@@ -57,19 +56,7 @@ public class FileService {
         return false;
     }
 
-    /**
-     * Check file exist by file name and mime
-     * @param newFile
-     * @return
-     */
-    public Integer checkFileExist(MultipartFile newFile){
-        String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
-        File file = fileRepo.findByName(fileName);
-        if(file != null && file.getMime().equals(newFile.getContentType())){
-            return file.getId();
-        }
-        return null;
-    }
+
 
 
 

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -40,8 +41,8 @@ public class FileUtil {
      * @return
      * @throws IOException
      */
-    public String saveFileToFolder(MultipartFile file, int version) throws IOException {
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename()) +"_v"+version;
+    public String saveFileToFolder(MultipartFile file) throws IOException {
+        String fileName = UUID.randomUUID() + StringUtils.cleanPath(file.getOriginalFilename());
         Path filePath = Paths.get(FILE_LOCATION, fileName).toAbsolutePath().normalize();
         Files.copy(file.getInputStream(), filePath, REPLACE_EXISTING);
         return filePath.toString();
@@ -59,7 +60,4 @@ public class FileUtil {
         Files.delete(filePath);
         return true;
     }
-
-
-
 }

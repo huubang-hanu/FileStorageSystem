@@ -1,20 +1,20 @@
 package com.hanu.filestorage.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class FileVersion {
 
     @Id
@@ -29,12 +29,15 @@ public class FileVersion {
     private long fileSize;
     private int numberOfDownload;
     private String path;
+    private boolean status;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    @Column(name = "created_at")
-    private Timestamp createTime;
+    private Date createdAt;
 
-    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false, updatable = false)
     @LastModifiedDate
-    private Timestamp updatedAt;
+    private Date updatedAt;
 }
