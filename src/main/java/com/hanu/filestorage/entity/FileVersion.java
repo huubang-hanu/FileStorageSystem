@@ -1,5 +1,6 @@
 package com.hanu.filestorage.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,6 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class FileVersion {
 
@@ -22,6 +24,7 @@ public class FileVersion {
     private Integer id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "file_id", nullable = false)
     private File file;
 
@@ -29,7 +32,7 @@ public class FileVersion {
     private long fileSize;
     private int numberOfDownload;
     private String path;
-    private boolean status;
+    private boolean isDeleted;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, updatable = false)

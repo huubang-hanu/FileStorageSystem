@@ -2,36 +2,65 @@ package com.hanu.filestorage.service;
 
 import com.hanu.filestorage.entity.File;
 import com.hanu.filestorage.entity.FileVersion;
+import com.hanu.filestorage.exception.ResourceNotFoundException;
 import com.hanu.filestorage.repository.FileRepository;
+import com.hanu.filestorage.repository.FileVersionRepository;
 import com.hanu.filestorage.util.FileUtil;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class FileService {
     private FileUtil fileUtil;
     private FileRepository fileRepo;
+    private FileVersionService fileVersionService;
 
-    public FileService(FileUtil fileUtil, FileRepository fileRepo) {
+    public FileService(FileUtil fileUtil, FileRepository fileRepo, FileVersionService fileVersionService) {
         this.fileUtil = fileUtil;
         this.fileRepo = fileRepo;
+        this.fileVersionService =fileVersionService;
     }
 
-    @SneakyThrows
-    public String storeFile(MultipartFile newFile){
+    public File storeFile(MultipartFile newFile) throws IOException {
         String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
         File file = fileRepo.findByName(fileName);
         boolean isExist = file != null && file.getMime().equals(newFile.getContentType());
-        long fileSize = newFile.getSize();
+        String path = fileUtil.saveFileToFolder(newFile);
+        FileVersion fileVersion = FileVersion.builder()
+                .numberOfDownload(0)
+                .isDeleted(false)
+                .fileSize(newFile.getSize())
+                .path(path)
+                .build();
+
+
         if( isExist) {
-            String path = fileUtil.saveFileToFolder(newFile);
-            FileVersion fileVersion = new FileVersion();
+            fileVersion.setVersion(file.getNumberOfVersion() +1);
+            fileVersion.setFile(file);
+            file.getFileVersions().add(fileVersion);
+            file.setNumberOfVersion(file.getNumberOfVersion() +1);
+            fileVersionService.createFileVersion(fileVersion);
+           return  fileRepo.save(file);
+        } else{
+
+            File savedFile = File.builder()
+                    .mime(newFile.getContentType())
+                    .name(fileName)
+                    .numberOfVersion(1)
+                    .build();
+
+            fileVersion.setVersion(1);
+            fileVersion.setFile(savedFile);
+            File result = fileRepo.save(savedFile);
+            fileVersionService.createFileVersion(fileVersion);
+
+
+            return fileRepo.findById(result.getId()).orElseThrow(() ->new ResourceNotFoundException("File is not exist"));
         }
-        return null;
     }
 
     /**
@@ -40,8 +69,7 @@ public class FileService {
      * @return
      */
     public List<File> getAll(){
-
-        return null;
+        return fileRepo.findAll();
     }
 
     /**
@@ -50,8 +78,6 @@ public class FileService {
      * @return
      */
     public boolean deleteFile(Integer fileId, Integer fileVersionId){
-        //delete fileversion with fileVersionId
-        //if list version of File is null -- remove File
 
         return false;
     }

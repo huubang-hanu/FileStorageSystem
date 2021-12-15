@@ -36,5 +36,9 @@ public class FileVersionService {
         return fileVersionRepo.findFileVersionsByFileId(fileId);
     }
 
+    public FileVersion createFileVersion(FileVersion fileVersion){
+        return fileVersionRepo.save(fileVersion);
+    }
+
 
 }

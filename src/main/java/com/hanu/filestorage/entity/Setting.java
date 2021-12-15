@@ -8,7 +8,11 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Setting {
 
@@ -20,9 +24,13 @@ public class Setting {
     private int itemPerPage;
     private String mimeTypeAllowed;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    private Date createAt;
+    private Date createdAt;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false, updatable = false)
     @LastModifiedDate
-    private Date updateAt;
+    private Date updatedAt;
 }

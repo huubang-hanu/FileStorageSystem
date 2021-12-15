@@ -17,7 +17,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Component
 public class FileUtil {
-    public static final String FILE_LOCATION = System.getProperty("user.home") + "Downloads/uploads/";
+    public static final String FILE_LOCATION = System.getProperty("user.home") + "/Downloads/uploads/";
 
     /**
      *

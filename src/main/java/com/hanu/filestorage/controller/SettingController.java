@@ -4,11 +4,9 @@ import com.hanu.filestorage.entity.Setting;
 import com.hanu.filestorage.service.SettingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("api/setting")
+@RestController
 public class SettingController {
     private SettingService settingService;
 
@@ -16,11 +14,15 @@ public class SettingController {
         this.settingService = settingService;
     }
 
-    @PostMapping("/")
+    @PostMapping("/api/setting/create")
     public ResponseEntity<Setting> createSetting(@RequestBody Setting setting){
-
         Setting settingResponse = settingService.createSetting(setting);
         return new ResponseEntity<Setting>(settingResponse, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Setting> updateSetting(@PathVariable Integer id, @RequestBody Setting newSetting){
+        return null;
     }
 
 }
