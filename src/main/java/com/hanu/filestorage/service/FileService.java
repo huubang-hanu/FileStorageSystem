@@ -6,6 +6,7 @@ import com.hanu.filestorage.exception.ResourceNotFoundException;
 import com.hanu.filestorage.repository.FileRepository;
 import com.hanu.filestorage.repository.FileVersionRepository;
 import com.hanu.filestorage.util.FileUtil;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,6 +64,16 @@ public class FileService {
         }
     }
 
+
+    public Resource downloadFile( String fileName,Integer fileVersionId){
+        FileVersion fileVersion = fileVersionService.getById(fileVersionId);
+        Resource resource = fileUtil.getFileByPath(fileVersion.getPath());
+        if(resource != null){
+           fileVersion.setNumberOfDownload(fileVersion.getNumberOfDownload()+1);
+           fileVersionService.update(fileVersion);
+        }
+        return resource;
+    }
     /**
      * Receive pagination information
      * Load files in database

@@ -21,10 +21,6 @@ public class FileVersionService {
         this.fileUtil = fileUtil;
     }
 
-    public List<FileVersion> getAllFileVersionInfo() {
-        List<FileVersion> fileVersions = fileVersionRepo.findAll();
-        return fileVersions;
-    }
 
     public FileVersion getById(Integer fileVersionId){
         FileVersion fileVersion = fileVersionRepo.findById(fileVersionId)
@@ -32,13 +28,12 @@ public class FileVersionService {
         return fileVersion;
     }
 
-    public List<FileVersion> getVersionsByFileId(Integer fileId) {
-        return fileVersionRepo.findFileVersionsByFileId(fileId);
-    }
-
     public FileVersion createFileVersion(FileVersion fileVersion){
         return fileVersionRepo.save(fileVersion);
     }
 
+    public FileVersion update(FileVersion fileVersion){
+        return fileVersionRepo.save(fileVersion);
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.hanu.filestorage.util;
 
+import com.hanu.filestorage.exception.ResourceNotFoundException;
 import com.hanu.filestorage.exception.StoreFileException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,17 +24,24 @@ public class FileUtil {
 
     /**
      *
-     * @param fileName
+     * @param path
      * @return
      * @throws IOException
      */
-    public Resource getFileByFileName(String fileName) throws IOException {
-        Path filePath = Paths.get(FILE_LOCATION).toAbsolutePath().normalize().resolve(fileName);
+    public Resource getFileByPath(String path)  {
+        Path filePath = Paths.get(path).toAbsolutePath().normalize();
         if (!Files.exists(filePath)) {
-            throw new FileNotFoundException(fileName + " was not found on the server");
+            throw new ResourceNotFoundException( "This was not found on the server");
         }
-        Resource resource = new UrlResource(filePath.toUri());
+        Resource resource = null;
+        try {
+            resource = new UrlResource(filePath.toUri());
+        } catch (MalformedURLException e) {
+            throw new ResourceNotFoundException( "This was not found on the server");
+        }
+
         return resource;
+
     }
 
 

@@ -17,13 +17,13 @@ public class ExceptionHelper {
     private final Logger logger = LoggerFactory.getLogger(ExceptionHelper.class);
 
     @ExceptionHandler(value = { ResourceNotFoundException.class })
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
         logger.error("Resource Not Found Exception: ",ex.getMessage());
         ErrorResponse error = new ErrorResponse();
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         error.setMessage(ex.getMessage());
         error.setTimeStamp(LocalDateTime.now());
-        return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = { StoreFileException.class })
