@@ -1,6 +1,8 @@
 package com.hanu.filestorage.controller;
 
 import com.hanu.filestorage.entity.File;
+import com.hanu.filestorage.exception.InvalidFileException;
+import com.hanu.filestorage.exception.StoreFileException;
 import com.hanu.filestorage.repository.FileRepository;
 import com.hanu.filestorage.service.FileService;
 import org.slf4j.Logger;
@@ -33,13 +35,14 @@ public class FileController {
     @PostMapping("/api/files/create")
     public ResponseEntity<File> createFile(@RequestBody MultipartFile file){
         logger.info("In File Controller");
-
-        File savedFile = null;
-        try {
-            savedFile = fileService.storeFile(file);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(file.getContentType() == null){
+            throw new InvalidFileException("Invalid file");
         }
+        File savedFile = null;
+
+
+            savedFile = fileService.storeFile(file);
+
         return new ResponseEntity<File>(savedFile, HttpStatus.CREATED);
     }
 
@@ -49,5 +52,12 @@ public class FileController {
        List<File> files = fileService.getAll();
        return new ResponseEntity<List<File>>(files, HttpStatus.OK);
     }
+
+    //Download file
+
+
+    //Delete file
+
+    //Update number of file version
 
 }

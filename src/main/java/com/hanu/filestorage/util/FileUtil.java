@@ -1,5 +1,6 @@
 package com.hanu.filestorage.util;
 
+import com.hanu.filestorage.exception.StoreFileException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Component
 public class FileUtil {
-    public static final String FILE_LOCATION = System.getProperty("user.home") + "/Downloads/uploads/";
+    public static final String FILE_LOCATION = "./src/main/resources/uploads";
 
     /**
      *
@@ -41,10 +42,14 @@ public class FileUtil {
      * @return
      * @throws IOException
      */
-    public String saveFileToFolder(MultipartFile file) throws IOException {
+    public String saveFileToFolder(MultipartFile file) {
         String fileName = UUID.randomUUID() + StringUtils.cleanPath(file.getOriginalFilename());
         Path filePath = Paths.get(FILE_LOCATION, fileName).toAbsolutePath().normalize();
-        Files.copy(file.getInputStream(), filePath, REPLACE_EXISTING);
+        try {
+            Files.copy(file.getInputStream(), filePath, REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new StoreFileException("Store file fail");
+        }
         return filePath.toString();
     }
 

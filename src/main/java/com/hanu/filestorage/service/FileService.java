@@ -25,7 +25,7 @@ public class FileService {
         this.fileVersionService =fileVersionService;
     }
 
-    public File storeFile(MultipartFile newFile) throws IOException {
+    public File storeFile(MultipartFile newFile) {
         String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
         File file = fileRepo.findByName(fileName);
         boolean isExist = file != null && file.getMime().equals(newFile.getContentType());
@@ -44,7 +44,7 @@ public class FileService {
             file.getFileVersions().add(fileVersion);
             file.setNumberOfVersion(file.getNumberOfVersion() +1);
             fileVersionService.createFileVersion(fileVersion);
-           return  fileRepo.save(file);
+           return  fileRepo.findById(file.getId()).orElseThrow(() ->new ResourceNotFoundException("File is not exist"));
         } else{
 
             File savedFile = File.builder()
@@ -78,10 +78,8 @@ public class FileService {
      * @return
      */
     public boolean deleteFile(Integer fileId, Integer fileVersionId){
-
         return false;
     }
-
 
 
 
