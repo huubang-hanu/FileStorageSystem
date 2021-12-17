@@ -7,6 +7,8 @@ import com.hanu.filestorage.repository.FileRepository;
 import com.hanu.filestorage.repository.FileVersionRepository;
 import com.hanu.filestorage.util.FileUtil;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,12 +85,28 @@ public class FileService {
         return fileRepo.findAll();
     }
 
+
+    /**
+     *
+     * @param offset
+     * @param pageSize
+     * @return
+     */
+    public Page<File> getFilesWithPagination(int offset, int pageSize){
+        Page<File> files = fileRepo.findAll(PageRequest.of(offset, pageSize));
+        return files;
+    }
     /**
      * Delete version of File
      * if file has no version --> Delete this file information
      * @return
      */
-    public boolean deleteFile(Integer fileId, Integer fileVersionId){
+    public boolean deleteFile(String  fileName, Integer fileVersionId){
+        FileVersion fileVersion = fileVersionService.getById(fileVersionId);
+        fileVersion.setDeleted(true);
+        fileVersionService.update(fileVersion);
+
+
         return false;
     }
 

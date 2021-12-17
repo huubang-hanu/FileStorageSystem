@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import java.util.List;
 
 
 @RestController
+@RequestMapping("/api/files")
 public class FileController {
 
     Logger logger = LoggerFactory.getLogger(FileController.class);
@@ -33,33 +35,33 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @PostMapping("/api/files/create")
+    @PostMapping("/upload")
     public ResponseEntity<File> createFile(@RequestBody MultipartFile file){
-        logger.info("In File Controller");
         if(file.getContentType() == null){
             throw new InvalidFileException("Invalid file");
         }
-        File savedFile = null;
-
-
-            savedFile = fileService.storeFile(file);
-
+        File savedFile = fileService.storeFile(file);
         return new ResponseEntity<File>(savedFile, HttpStatus.CREATED);
     }
 
 
-    @GetMapping("/api/files")
+    @GetMapping("/")
     public ResponseEntity<List<File>> getAll(){
        List<File> files = fileService.getAll();
        return new ResponseEntity<List<File>>(files, HttpStatus.OK);
     }
 
-    //Download file
-    @GetMapping("/download/{fileName}/{fileVersion}")
+    @GetMapping("/pagination/{offset}/{pageSize}")
+    public ResponseEntity<Page<File>> getFilesWithPagination(@PathVariable int offset, @PathVariable int pageSize){
+        Page<File> filesWithPagination = fileService.getFilesWithPagination(offset, pageSize);
+        return new ResponseEntity<Page<File>>(filesWithPagination, HttpStatus.OK);
+    }
+
+    @GetMapping("/download/{fileName}/{fileVersionId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName,
-                                                 @PathVariable Integer fileVersion,
+                                                 @PathVariable Integer fileVersionId,
                                                  HttpServletRequest request){
-        Resource resource = fileService.downloadFile(fileName, fileVersion);
+        Resource resource = fileService.downloadFile(fileName, fileVersionId);
 
         String contentType = null;
         try {
@@ -76,4 +78,10 @@ public class FileController {
                 .body(resource);
     }
 
+    @DeleteMapping("/delete/{fileName}/{fileVersionId}")
+    public ResponseEntity<File> deleteFile(@PathVariable String fileName,
+                                           @PathVariable Integer fileVersionId){
+        fileService.deleteFile(fileName, fileVersionId);
+        return null;
+    }
 }
