@@ -1,5 +1,6 @@
 package com.hanu.filestorage.controller;
 
+import com.hanu.filestorage.dto.SettingDTO;
 import com.hanu.filestorage.entity.Setting;
 import com.hanu.filestorage.service.SettingService;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/setting")
 public class SettingController {
     private SettingService settingService;
 
@@ -14,15 +16,22 @@ public class SettingController {
         this.settingService = settingService;
     }
 
-    @PostMapping("/api/setting/create")
-    public ResponseEntity<Setting> createSetting(@RequestBody Setting setting){
-        Setting settingResponse = settingService.createSetting(setting);
-        return new ResponseEntity<Setting>(settingResponse, HttpStatus.CREATED);
+    @GetMapping("/{id}")
+    public ResponseEntity<SettingDTO> findById(@PathVariable Integer id){
+        SettingDTO settingDTO =  settingService.getSetting(id);
+        return new ResponseEntity<SettingDTO>(settingDTO, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Setting> updateSetting(@PathVariable Integer id, @RequestBody Setting newSetting){
-        return null;
+    @PostMapping("/add")
+    public ResponseEntity<SettingDTO> createSetting(@RequestBody SettingDTO setting){
+        SettingDTO settingResponse = settingService.createSetting(setting);
+        return new ResponseEntity<SettingDTO>(settingResponse, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<SettingDTO> updateSetting(@PathVariable Integer id, @RequestBody SettingDTO newSetting){
+        SettingDTO settingDTO = settingService.updateSetting(id, newSetting);
+        return new ResponseEntity(settingDTO, HttpStatus.OK);
     }
 
 

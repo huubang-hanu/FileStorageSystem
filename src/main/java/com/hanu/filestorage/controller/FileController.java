@@ -1,9 +1,8 @@
 package com.hanu.filestorage.controller;
 
+import com.hanu.filestorage.dto.FileDTO;
 import com.hanu.filestorage.entity.File;
 import com.hanu.filestorage.exception.InvalidFileException;
-import com.hanu.filestorage.exception.StoreFileException;
-import com.hanu.filestorage.repository.FileRepository;
 import com.hanu.filestorage.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,10 +44,10 @@ public class FileController {
     }
 
 
-    @GetMapping("/")
-    public ResponseEntity<List<File>> getAll(){
-       List<File> files = fileService.getAll();
-       return new ResponseEntity<List<File>>(files, HttpStatus.OK);
+    @GetMapping("")
+    public ResponseEntity<List<FileDTO>> getAll(){
+       List<FileDTO> files = fileService.getAll();
+       return new ResponseEntity<List<FileDTO>>(files, HttpStatus.OK);
     }
 
     @GetMapping("/pagination/{offset}/{pageSize}")
@@ -72,9 +71,12 @@ public class FileController {
         if(contentType == null) {
             contentType = "application/octet-stream";
         }
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("File-Name", fileName);
+        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment;File-Name=" + resource.getFilename());
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .headers(httpHeaders)
                 .body(resource);
     }
 

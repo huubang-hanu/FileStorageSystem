@@ -1,11 +1,13 @@
 package com.hanu.filestorage.service;
 
+import com.hanu.filestorage.dto.FileDTO;
 import com.hanu.filestorage.entity.File;
 import com.hanu.filestorage.entity.FileVersion;
 import com.hanu.filestorage.exception.ResourceNotFoundException;
 import com.hanu.filestorage.repository.FileRepository;
 import com.hanu.filestorage.repository.FileVersionRepository;
 import com.hanu.filestorage.util.FileUtil;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,17 +17,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FileService {
     private FileUtil fileUtil;
     private FileRepository fileRepo;
     private FileVersionService fileVersionService;
+    private ModelMapper modelMapper;
 
-    public FileService(FileUtil fileUtil, FileRepository fileRepo, FileVersionService fileVersionService) {
+    public FileService(FileUtil fileUtil,
+                       FileRepository fileRepo,
+                       FileVersionService fileVersionService,
+                       ModelMapper modelMapper) {
         this.fileUtil = fileUtil;
         this.fileRepo = fileRepo;
         this.fileVersionService =fileVersionService;
+        this.modelMapper = modelMapper;
     }
 
     public File storeFile(MultipartFile newFile) {
@@ -42,7 +50,7 @@ public class FileService {
 
 
         if( isExist) {
-            fileVersion.setVersion(file.getNumberOfVersion() +1);
+            fileVersion.setVersion(file.getFileVersions().size() +1);
             fileVersion.setFile(file);
             file.getFileVersions().add(fileVersion);
             file.setNumberOfVersion(file.getNumberOfVersion() +1);
@@ -81,8 +89,11 @@ public class FileService {
      * Load files in database
      * @return
      */
-    public List<File> getAll(){
-        return fileRepo.findAll();
+    public List<FileDTO> getAll(){
+        return fileRepo.findAll()
+                .stream()
+                .map(file -> modelMapper.map(file, FileDTO.class))
+                .collect(Collectors.toList());
     }
 
 
@@ -102,17 +113,20 @@ public class FileService {
      * @return
      */
     public boolean deleteFile(String  fileName, Integer fileVersionId){
+       //Get file which have version is deleted
+        File file = fileRepo.findByName(fileName);
+
+        //Update number of version
+        file.setNumberOfVersion(
+                file.getNumberOfVersion() - 1
+        );
+        fileRepo.save(file);
+
+        //Update file version status
         FileVersion fileVersion = fileVersionService.getById(fileVersionId);
         fileVersion.setDeleted(true);
         fileVersionService.update(fileVersion);
+        return true;
 
-
-        return false;
     }
-
-
-
-
-
-
 }

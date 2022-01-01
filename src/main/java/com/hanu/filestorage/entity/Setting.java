@@ -21,7 +21,6 @@ public class Setting {
     private Integer id;
 
     private double maxFileSize;
-    private int itemPerPage;
     private String mimeTypeAllowed;
 
     @Temporal(TemporalType.TIMESTAMP)

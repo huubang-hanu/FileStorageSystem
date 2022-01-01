@@ -36,4 +36,11 @@ public class FileVersionService {
         return fileVersionRepo.save(fileVersion);
     }
 
+    public FileVersion delete(Integer id){
+        return  this.fileVersionRepo.findById(id).map(version -> {
+            this.fileVersionRepo.delete(version);
+            return version;
+        }).orElseThrow(() -> new ResourceNotFoundException("File Version is not exist"));
+    }
+
 }
