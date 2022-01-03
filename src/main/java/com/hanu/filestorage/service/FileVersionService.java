@@ -21,26 +21,33 @@ public class FileVersionService {
         this.fileUtil = fileUtil;
     }
 
-
+    /**
+     * Get file version by Id
+     * @param fileVersionId
+     * @return
+     */
     public FileVersion getById(Integer fileVersionId){
         FileVersion fileVersion = fileVersionRepo.findById(fileVersionId)
                 .orElseThrow(()-> new ResourceNotFoundException("File is not exist"));
         return fileVersion;
     }
 
+    /**
+     * Create file version
+     * @param fileVersion
+     * @return
+     */
     public FileVersion createFileVersion(FileVersion fileVersion){
         return fileVersionRepo.save(fileVersion);
     }
 
+    /**
+     * Update file version
+     * @param fileVersion
+     * @return
+     */
     public FileVersion update(FileVersion fileVersion){
         return fileVersionRepo.save(fileVersion);
-    }
-
-    public FileVersion delete(Integer id){
-        return  this.fileVersionRepo.findById(id).map(version -> {
-            this.fileVersionRepo.delete(version);
-            return version;
-        }).orElseThrow(() -> new ResourceNotFoundException("File Version is not exist"));
     }
 
 }

@@ -1,14 +1,12 @@
 package com.hanu.filestorage.controller;
 
 import com.hanu.filestorage.dto.FileDTO;
-import com.hanu.filestorage.entity.File;
 import com.hanu.filestorage.exception.InvalidFileException;
 import com.hanu.filestorage.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,12 +33,12 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<File> createFile(@RequestBody MultipartFile file){
+    public ResponseEntity createFile(@RequestBody MultipartFile file){
         if(file.getContentType() == null){
             throw new InvalidFileException("Invalid file");
         }
-        File savedFile = fileService.storeFile(file);
-        return new ResponseEntity<File>(savedFile, HttpStatus.CREATED);
+        fileService.storeFile(file);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
 
@@ -50,11 +48,6 @@ public class FileController {
        return new ResponseEntity<List<FileDTO>>(files, HttpStatus.OK);
     }
 
-    @GetMapping("/pagination/{offset}/{pageSize}")
-    public ResponseEntity<Page<File>> getFilesWithPagination(@PathVariable int offset, @PathVariable int pageSize){
-        Page<File> filesWithPagination = fileService.getFilesWithPagination(offset, pageSize);
-        return new ResponseEntity<Page<File>>(filesWithPagination, HttpStatus.OK);
-    }
 
     @GetMapping("/download/{fileName}/{fileVersionId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName,
@@ -81,9 +74,9 @@ public class FileController {
     }
 
     @DeleteMapping("/delete/{fileName}/{fileVersionId}")
-    public ResponseEntity<File> deleteFile(@PathVariable String fileName,
-                                           @PathVariable Integer fileVersionId){
+    public ResponseEntity deleteFile(@PathVariable String fileName,
+                                     @PathVariable Integer fileVersionId){
         fileService.deleteFile(fileName, fileVersionId);
-        return null;
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

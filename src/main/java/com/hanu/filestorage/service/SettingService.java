@@ -19,20 +19,35 @@ public class SettingService {
         this.settingRepository = settingRepository;
     }
 
+    /**
+     * Create setting
+     * @param settingDTO
+     * @return
+     */
     public SettingDTO createSetting(SettingDTO settingDTO){
         Setting setting = mapper.map(settingDTO, Setting.class);
 
        return mapper.map(settingRepository.save(setting), SettingDTO.class);
     }
 
+    /**
+     * Get setting by id
+     * @param id
+     * @return
+     */
     public SettingDTO getSetting(Integer id){
-
         return settingRepository
                 .findById(id)
                 .map(setting ->  mapper.map(setting, SettingDTO.class))
                 .orElseThrow(() ->new ResourceNotFoundException("Setting is not exist"));
     }
 
+    /**
+     * Update setting
+     * @param id
+     * @param settingDTO
+     * @return
+     */
     public SettingDTO updateSetting(Integer id, SettingDTO settingDTO){
 
         return settingRepository.findById(id).map(setting -> {

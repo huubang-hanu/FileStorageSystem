@@ -1,7 +1,6 @@
 package com.hanu.filestorage.controller;
 
 import com.hanu.filestorage.dto.SettingDTO;
-import com.hanu.filestorage.entity.Setting;
 import com.hanu.filestorage.service.SettingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +32,4 @@ public class SettingController {
         SettingDTO settingDTO = settingService.updateSetting(id, newSetting);
         return new ResponseEntity(settingDTO, HttpStatus.OK);
     }
-
-
-
 }

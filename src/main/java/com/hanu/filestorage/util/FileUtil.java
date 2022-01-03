@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -23,7 +22,7 @@ public class FileUtil {
     public static final String FILE_LOCATION = "./src/main/resources/uploads";
 
     /**
-     *
+     * Get file by path
      * @param path
      * @return
      * @throws IOException
@@ -31,13 +30,13 @@ public class FileUtil {
     public Resource getFileByPath(String path)  {
         Path filePath = Paths.get(path).toAbsolutePath().normalize();
         if (!Files.exists(filePath)) {
-            throw new ResourceNotFoundException( "This was not found on the server");
+            throw new ResourceNotFoundException( "This file path was not found on the server");
         }
         Resource resource = null;
         try {
             resource = new UrlResource(filePath.toUri());
         } catch (MalformedURLException e) {
-            throw new ResourceNotFoundException( "This was not found on the server");
+            throw new ResourceNotFoundException( "Resource was not found on the server");
         }
 
         return resource;
@@ -46,13 +45,16 @@ public class FileUtil {
 
 
     /**
-     *
+     *  Save file and return path
      * @param file
      * @return
      * @throws IOException
      */
     public String saveFileToFolder(MultipartFile file) {
+        //Create unique file name
         String fileName = UUID.randomUUID() + StringUtils.cleanPath(file.getOriginalFilename());
+
+        //Create file path
         Path filePath = Paths.get(FILE_LOCATION, fileName).toAbsolutePath().normalize();
         try {
             Files.copy(file.getInputStream(), filePath, REPLACE_EXISTING);
@@ -60,18 +62,5 @@ public class FileUtil {
             throw new StoreFileException("Store file fail");
         }
         return filePath.toString();
-    }
-
-
-    /**
-     * Delete file from path
-     * @param path
-     * @return
-     * @throws IOException
-     */
-    public boolean deleteFileFromFolder(String path) throws IOException {
-        Path filePath = Paths.get(path).toAbsolutePath().normalize();
-        Files.delete(filePath);
-        return true;
     }
 }
